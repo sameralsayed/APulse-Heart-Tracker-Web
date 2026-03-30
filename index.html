@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="APulse Heart Tracker Web - Measure your heart rate instantly with camera, log blood pressure &amp; blood sugar, view trends, history &amp; health insights. Private, local-only data. Sleek mobile-first health dashboard.">
+    <meta name="keywords" content="heart rate monitor web, pulse tracker, blood pressure logger, blood sugar tracker, heart health app, camera heart rate, health trends chart, online pulse checker">
+    <meta name="author" content="SAMER SAEID">
+    <meta name="robots" content="index, follow">
+    <title>APulse Heart Tracker - Pulse &amp; Health Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="canonical" href="https://yourdomain.com/apulse-heart-tracker-web">
+</head>
+<body class="bg-dark text-white">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black sticky-top border-bottom border-info shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <i class="bi bi-heart-pulse-fill me-2 fs-3 text-info"></i>
+                APulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(0)"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(1)"><i class="bi bi-camera me-1"></i>Measure HR</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(2)"><i class="bi bi-journal-plus me-1"></i>Log Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(3)"><i class="bi bi-graph-up me-1"></i>Trends</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(4)"><i class="bi bi-clock-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab(5)"><i class="bi bi-gear me-1"></i>Settings</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO STATUS -->
+    <div class="bg-black py-3 border-bottom border-info">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <span class="badge bg-info px-3 py-2"><i class="bi bi-heart-pulse me-1"></i>HEART HEALTHY</span>
+            </div>
+            <div class="d-flex gap-4 text-center">
+                <div>
+                    <small class="text-muted">Last HR</small><br>
+                    <span id="lastHR" class="fs-4 fw-bold text-info">72 bpm</span>
+                </div>
+                <div>
+                    <small class="text-muted">BP</small><br>
+                    <span id="lastBP" class="fs-4 fw-bold text-info">118/78</span>
+                </div>
+                <div>
+                    <small class="text-muted">Sugar</small><br>
+                    <span id="lastSugar" class="fs-4 fw-bold text-info">92 mg/dL</span>
+                </div>
+            </div>
+            <button onclick="quickMeasure()" class="btn btn-info btn-lg rounded-pill px-4 shadow-sm">
+                <i class="bi bi-camera-video me-2"></i>QUICK MEASURE
+            </button>
+        </div>
+    </div>
+
+    <div class="container py-4">
+
+        <!-- TAB 0: HOME / DASHBOARD -->
+        <div id="tab-0" class="tab-panel active">
+            <h3 class="mb-4 text-info"><i class="bi bi-speedometer2 me-2"></i>Today’s Health Snapshot</h3>
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card bg-black border-info h-100 text-center p-4">
+                        <div class="pulse-circle mx-auto mb-3"></div>
+                        <h5>Current Resting HR</h5>
+                        <h2 id="dashboardHR" class="display-5 fw-bold text-info">72 <span class="fs-5 text-white-50">bpm</span></h2>
+                        <small class="text-success">Normal • Excellent</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-black border-info h-100 p-4">
+                        <h5 class="mb-3">Recent Measurements</h5>
+                        <div id="recentList" class="list-group list-group-flush"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-black border-info h-100 p-4">
+                        <h5 class="mb-3">Health Tips</h5>
+                        <ul class="text-white-50 small">
+                            <li class="mb-2">💧 Stay hydrated – helps keep BP stable</li>
+                            <li class="mb-2">🚶 10-minute walk lowers resting heart rate</li>
+                            <li>🧘‍♂️ Deep breathing reduces stress &amp; sugar spikes</li>
+                        </ul>
+                        <button onclick="switchTab(3)" class="btn btn-outline-info w-100 mt-3">View Full Trends →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: MEASURE HEART RATE -->
+        <div id="tab-1" class="tab-panel">
+            <h4 class="mb-4 text-info"><i class="bi bi-camera me-2"></i>Camera Heart Rate Monitor</h4>
+            <div class="text-center">
+                <div id="cameraContainer" class="mx-auto border border-info rounded-4 overflow-hidden position-relative" style="max-width:420px; background:#111;">
+                    <video id="videoPreview" autoplay playsinline class="w-100" style="display:none;"></video>
+                    <div id="cameraOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                        <i id="fingerIcon" class="bi bi-hand-index-thumb fs-1 mb-3 text-info"></i>
+                        <h5>Place your finger gently on the camera lens</h5>
+                        <p class="text-white-50 small">Keep still and in good lighting</p>
+                        <button onclick="startHRMeasurement()" id="measureBtn" class="btn btn-info btn-lg mt-3 px-5">START MEASURING</button>
+                    </div>
+                    <canvas id="pulseCanvas" class="position-absolute top-0 start-0 w-100 h-100 d-none"></canvas>
+                </div>
+                
+                <div id="measuringUI" class="mt-4 d-none">
+                    <div class="progress" style="height:8px">
+                        <div id="measureProgress" class="progress-bar bg-info progress-bar-striped progress-bar-animated" style="width:0%"></div>
+                    </div>
+                    <h5 class="mt-3">Measuring your pulse… <span id="countdown">15</span>s</h5>
+                    <div class="pulse-wave mt-4"></div>
+                </div>
+                
+                <div id="resultHR" class="mt-5 d-none">
+                    <h2 class="display-4 text-info" id="finalBPM">—</h2>
+                    <p class="lead">Your heart rate is <span id="hrStatus" class="fw-bold"></span></p>
+                    <button onclick="saveHRResult()" class="btn btn-success px-5">Save to History</button>
+                    <button onclick="resetMeasurement()" class="btn btn-outline-light ms-3">Measure Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: LOG DATA -->
+        <div id="tab-2" class="tab-panel">
+            <h4 class="mb-4 text-info"><i class="bi bi-journal-plus me-2"></i>Log Blood Pressure &amp; Sugar</h4>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card bg-black border-info p-4">
+                        <h5>Blood Pressure</h5>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <input id="systolic" type="number" class="form-control bg-black text-white border-info" placeholder="Systolic (top)" value="118">
+                            </div>
+                            <div class="col-6">
+                                <input id="diastolic" type="number" class="form-control bg-black text-white border-info" placeholder="Diastolic (bottom)" value="78">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card bg-black border-info p-4">
+                        <h5>Blood Sugar</h5>
+                        <input id="sugar" type="number" class="form-control bg-black text-white border-info" placeholder="mg/dL" value="92">
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveLogData()" class="btn btn-info w-100 py-3 mt-4">💾 SAVE MEASUREMENT</button>
+        </div>
+
+        <!-- TAB 3: TRENDS -->
+        <div id="tab-3" class="tab-panel">
+            <h4 class="mb-4 text-info"><i class="bi bi-graph-up me-2"></i>Health Trends</h4>
+            <canvas id="trendChart" class="w-100" height="320"></canvas>
+            <div class="mt-4 text-center small text-white-50">
+                Last 30 days • Heart Rate • BP • Blood Sugar
+            </div>
+        </div>
+
+        <!-- TAB 4: HISTORY -->
+        <div id="tab-4" class="tab-panel">
+            <h4 class="mb-4 text-info"><i class="bi bi-clock-history me-2"></i>Measurement History</h4>
+            <div id="historyList" class="list-group"></div>
+        </div>
+
+        <!-- TAB 5: SETTINGS -->
+        <div id="tab-5" class="tab-panel">
+            <h4 class="mb-4 text-info"><i class="bi bi-gear me-2"></i>Settings</h4>
+            <div class="card bg-black border-info p-4">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="soundToggle" checked>
+                    <label class="form-check-label">Measurement sound alerts</label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="widgetToggle" checked>
+                    <label class="form-check-label">Enable home-screen widget style</label>
+                </div>
+                <button onclick="clearAllData()" class="btn btn-outline-danger w-100 mt-4">🗑️ Clear All Local Data</button>
+                <p class="small text-white-50 mt-3">All data is stored only on this device. No cloud, no sharing.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-black text-white py-4 border-top border-info">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <div>
+                    <span class="text-info">&copy; Copyright SAMER SAEID</span>
+                </div>
+                <div class="text-center">
+                    Made by ♥️ <a href="https://bio.link/samer" target="_blank" class="text-white text-decoration-none fw-bold">SAMER SAEID</a>
+                </div>
+                <div class="small text-white-50">
+                    100% Private • Works on all devices • SEO Optimized
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
